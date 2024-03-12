@@ -39,7 +39,7 @@ export const addProductToCart = async (req, res, next) => {
       if (!cart) {
         return CustomError.generateError(ErrorsMessages.CART_OR_PRODUCT_NOT_FOUND,404,ErrorsNames.CART_OR_PRODUCT_NOT_FOUND);
       }
-      res.status(200).json({message: "Cart", cart });
+      res.status(200).json({message: "Product added to Cart!" })
     } catch (error) {
       next(error);
     }

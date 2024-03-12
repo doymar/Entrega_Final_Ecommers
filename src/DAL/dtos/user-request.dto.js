@@ -7,5 +7,6 @@ export default class UsersRequest {
       this.age = user.age;
       this.cart = user.cart;
       this.role = user.role;
+      this.last_connection = user.last_connection;
     }
   }

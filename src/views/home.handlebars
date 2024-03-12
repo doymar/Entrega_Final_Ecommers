@@ -1,7 +1,7 @@
-<h2>Bienvenido {{user.first_name}}!!</h2>
-<h4>Tu email es: {{user.email}}</h4>
-<h4>Rol: {{user.role}}</h4>
-
+<h2>Welcome {{user.first_name}}!!</h2>
+<h4>Your email is: {{user.email}}</h4>
+<h4>Role: {{user.role}}</h4>
+<button onclick="location.href='/api/users/premium/{{user.id}}'">Change role</button>
 {{#if products}}
 
 {{#each products}}
@@ -9,11 +9,20 @@
     <h3>{{title}}</h3>
     <p>Price: {{price}}</p>
     <p>Stock: {{stock}}</p>
+    <button onclick="location.href='/product/{{_id}}'">View product</button>
 </div>
 {{/each}}
-
+{{#if info.nextPage}}
+<p><button onclick="location.href='/home?page={{info.nextPage}}'">Next page</button>
+{{/if}}
+{{#if info.prevPage}}
+<p><button onclick="location.href='/home?page={{info.prevPage}}'">Previous page</button></p>
+{{/if}}
+<p><button onclick="location.href='/carts/{{user._id}}'">View cart</button>
+<button onclick="location.href='/api/carts/{{user._id}}/purchase'">Buy products</button>
+</p>
 {{else}}
 <p>No products</p>
 {{/if}}
 
-<button><a href="/api/sessions/signout">SIGNOUT</a></button>
+<p><button><a href="/api/sessions/signout">SIGNOUT</a></button></p>

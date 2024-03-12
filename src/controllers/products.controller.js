@@ -47,7 +47,7 @@ export const deleteProduct = async (req, res, next) => {
       if (!mongoose.Types.ObjectId.isValid(idProduct)) {
         return CustomError.generateError(ErrorsMessages.OID_INVALID,404,ErrorsNames.OID_INVALID);
       }
-      const user = req.user
+      const user = req.user.email
       const response = await productsService.deleteOne(idProduct, user);
       if (!response) {
         return CustomError.generateError(ErrorsMessages.PRODUCTS_NOT_FOUND,404,ErrorsNames.PRODUCTS_NOT_FOUND);

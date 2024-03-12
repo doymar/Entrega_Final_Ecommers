@@ -1,5 +1,6 @@
 import { usersService } from '../services/users.service.js'
 import mongoose from 'mongoose';
+import UsersResponse from '../DAL/dtos/user-response.dto.js';
 import { ErrorsMessages, ErrorsNames } from '../errors/errors.enum.js';
 import CustomError from '../errors/error.generator.js';
 
@@ -16,7 +17,9 @@ export const createUser = async (req,res) =>{
 export const findUsers = async (req,res) =>{
     try {
         const users = await usersService.findAll();
-        res.status(200).json({message: "Users", users});
+        const usersDTO = users.map(user => UsersResponse.fromModel(user));
+        //const inactiveUsers= usersDTO.filter(u => u.last_connection <= Date.now())
+        res.status(200).json({message: "Users", usersDTO});
     } catch (err) {
         res.status(500).json({error: err.message});
     }
@@ -85,5 +88,28 @@ export const saveUserDocuments = async (req,res) =>{
         res.status(200).json({message: 'Documents saved'});
     } catch (error) {
         res.status(500).json({error: err.message});
+    }
+}
+
+export const deleteInactiveUsers = async (req,res,next) =>{
+    try {
+        const users = await usersService.deleteInactiveUser();
+        console.log(users);
+        if (!users) {
+            return CustomError.generateError(ErrorsMessages.USER_NOT_FOUND,404,ErrorsNames.USER_NOT_FOUND);
+        }
+        res.status(200).json({ message: "Users deleted" });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const adminUsers = async (req,res) =>{
+    try {
+        const { uid } = req.params;
+        const response = await usersService.findById(uid)
+        res.render('adminuser', {user: {...response, uid}})
+    } catch (error) {
+        res.status(500).json({error: error.message});
     }
 }

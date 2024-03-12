@@ -1,0 +1,10 @@
+{{#if user}}
+<h2>User: {{user.name}} </h2>
+<p>Email: {{user.email}}</p>
+<p>Role: {{user.role}}</p>
+<p>Last connection: {{user.last_connection}}</p>
+<button onclick="location.href='/api/users/premium/{{user.uid}}'">Change role</button>
+<button onclick="location.href='/premium/{{user.uid}}'">Delete user</button>
+{{else}}
+<p>No user</p>
+{{/if}}

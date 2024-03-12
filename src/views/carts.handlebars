@@ -1,4 +1,4 @@
-<h2>Productos en tu carrito:</h2>
+<h2>Products in your cart:</h2>
 
 {{#if products}}
 
@@ -12,7 +12,8 @@
     <p>Category: {{product.category}}</p>
 </div>
 {{/each}}
-
+<p><button onclick="location.href='/api/carts/{{_id.cid}}/purchase'">Buy products</button>
+</p>
 {{else}}
 <p>No products</p>
 {{/if}}

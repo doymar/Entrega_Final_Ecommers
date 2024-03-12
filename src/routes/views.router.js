@@ -2,12 +2,13 @@ import { Router } from "express";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { ProductManager } from "../DAL/daos/mongo/products.mongo.js";
 import { CartManager } from "../DAL/daos/mongo/carts.mongo.js";
+import { UserManager } from "../DAL/daos/mongo/users.mongo.js";
 import { randomProducts } from '../utils/faker.js';
 import { logger } from "../utils/logger.js";
 
 const router = Router();
 
-router.get("/", authMiddleware('user'), (req,res)=>{
+router.get("/", authMiddleware(['user','premium']), (req,res)=>{
     res.render("chat");
 });
 
@@ -39,8 +40,14 @@ router.get('/password_reset',(req,res)=>{
 
 router.get('/product/:idProduct',async(req,res)=>{
     const {idProduct} = req.params
+    if (!req.user) {
+        return res.redirect("/login")
+    }
+    const {id} = req.user; 
+    const userp = await UserManager.findById(id);
     const response = await ProductManager.findById(idProduct);
-    res.render('product',{product: response.toObject()});
+    const userCart= userp.cart._id;
+    res.render('product',{product: response.toObject(), cart: userCart});
 });
 
 router.get('/home', async (req,res) => {
@@ -49,10 +56,12 @@ router.get('/home', async (req,res) => {
     }
     const response = await ProductManager.findAll(req.query);
     const {info} = response
-    const {payload} = info 
+    const {payload, prevPage, nextPage, hasPrevPage, hasNextPage} = info 
     const productsData = payload.map(doc => doc.toObject());
     const {first_name, email, role} = req.user;
-    res.render("home",{products: productsData, user: {first_name, email, role}})
+    const id = req.user._id;
+    const {_id} = req.user.cart
+    res.render("home",{products: productsData, user: {first_name, email, role, id, _id}, info: {prevPage, nextPage}})
 });
 
 router.get('/signup',(req,res)=>{
@@ -74,7 +83,7 @@ router.get('/carts/:cid', async (req,res) => {
     try {
         const cart = await CartManager.findCartById(cid);
         const cartProducts = cart.products.map(doc => doc.toObject());
-        res.render('carts', {products: cartProducts})
+        res.render('carts', {products: cartProducts, _id: {cid}})
     } catch (error) {
         res.status(500).json({message: error.message});
     }

@@ -30,6 +30,11 @@ class UsersManager {
         const response = await usersModel.deleteOne({_id: id});
         return response;
     }
+    
+    async deleteMany(users) {
+        const response = await usersModel.deleteMany(users);
+        return response;
+    }
 
     async findByCart(cart) {
         const response = await usersModel.findOne({cart});

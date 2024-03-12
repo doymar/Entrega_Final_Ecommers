@@ -70,7 +70,8 @@ passport.use('github', new GithubStrategy(
                 isGithub: true
             };
             const newCart = await CartManager.createCart();
-            const newObj = {...infoUser, cart: newCart._id}
+            const fecha = new Date(Date.now());
+            const newObj = {...infoUser, cart: newCart._id, last_connection: fecha}
             const createdUser = await UserManager.createOne(newObj);
             done(null, createdUser);
         } catch (error) {
@@ -108,7 +109,8 @@ passport.use('google', new GoogleStrategy(
                 isGoogle: true
             };
             const newCart = await CartManager.createCart();
-            const newObj = {...infoUser, cart: newCart._id}
+            const fecha = new Date(Date.now());
+            const newObj = {...infoUser, cart: newCart._id, last_connection: fecha}
             const createdUser = await UserManager.createOne(newObj);
             done(null, createdUser);
         } catch (error) {

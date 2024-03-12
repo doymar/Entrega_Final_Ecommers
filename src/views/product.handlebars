@@ -1,7 +1,9 @@
 {{#if product}}
-
+<form action="/api/carts/{{cart}}/product/{{product._id}}" method="post">
 <h2>{{product.title}} {{product.description}}</h2>
 <p>The price is: {{product.price}}</p>
+<button type="submit">Add to cart</button>
+</form>
 {{else}}
 <p>No product</p>
 {{/if}}

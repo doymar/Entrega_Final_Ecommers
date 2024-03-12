@@ -3,6 +3,7 @@ import { CartManager } from "../DAL/daos/mongo/carts.mongo.js";
 import UsersRequestDto from "../DAL/dtos/user-request.dto.js";
 import UsersResponseDto from "../DAL/dtos/user-response.dto.js";
 import { hashData } from "../utils/utils.js";
+import { transporter } from "../utils/nodemailer.js";
 import CustomError from '../errors/error.generator.js'
 import { ErrorsMessages, ErrorsNames } from '../errors/errors.enum.js';
 
@@ -22,7 +23,8 @@ class UsersService {
         const hashedPassword = await hashData(obj.password);
         const newCart = await CartManager.createCart();
         //const cart = newCart._id
-        const newObj = {...obj, password: hashedPassword, cart: newCart._id}
+        const fecha = new Date(Date.now());
+        const newObj = {...obj, password: hashedPassword, cart: newCart._id, last_connection: fecha}
         const userDTO = new UsersRequestDto(newObj)
         const createdUser = await UserManager.createOne(userDTO);
         return createdUser;
@@ -37,6 +39,27 @@ class UsersService {
     async deleteOne(id) {
         const user = await UserManager.deleteOne(id);
         return user;
+    }
+
+    async deleteInactiveUser() {
+        const users = await UserManager.findAll();
+        const today = new Date();
+        const twoDays = 1000 * 60 * 60 * 24 * 2;
+        const resta = today.getTime() - twoDays
+        const date = new Date(resta)
+        const inactiveUsers= users.map(u => {if (Date.parse(u.last_connection) < date){
+            const mailOptions = {
+                from: 'Doymar eCommers',
+                to: u.email,
+                subject: 'Your account was deleted',
+                html: `<b>Hello ${u.first_name}!</b>
+                <p>Your account was deleted due to inactivity</p>`,
+              }
+            transporter.sendMail(mailOptions);
+            return u.last_connection;
+        }} )
+        const usersDeleted = await UserManager.deleteMany({ last_connection: inactiveUsers});
+        return usersDeleted;
     }
 
     async updateRole(id) {
