@@ -9,9 +9,6 @@ import { logger } from "../utils/logger.js";
 const router = Router();
 
 router.get("/", authMiddleware(['user','premium']), (req,res)=>{
-    if (!req.user) {
-        return res.redirect("/login")
-    }
     res.render("chat");
 });
 
@@ -59,7 +56,7 @@ router.get('/home', async (req,res) => {
     }
     const response = await ProductManager.findAll(req.query);
     const {info} = response
-    const {payload, prevPage, nextPage, hasPrevPage, hasNextPage} = info 
+    const {payload, prevPage, nextPage} = info 
     const productsData = payload.map(doc => doc.toObject());
     const {first_name, email, role} = req.user;
     const id = req.user._id;

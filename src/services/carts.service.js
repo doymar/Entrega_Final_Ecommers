@@ -73,8 +73,8 @@ class CarsService {
           purchaser: user.email,
         };
         logger.info(ticket);
-        await TicketManager.createTicket(ticket);
-        return { availableProducts, totalAmount };
+        const purchaseTicket = await TicketManager.createTicket(ticket);
+        return { availableProducts, totalAmount, purchaseTicket };
       }
       return { unavailableProducts };
     };

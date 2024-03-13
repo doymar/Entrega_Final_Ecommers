@@ -123,7 +123,11 @@ export const ticketPurchase = async (req, res, next) => {
     if (!response) {
       return CustomError.generateError(ErrorsMessages.CART_NOT_FOUND,404,ErrorsNames.CART_NOT_FOUND);
     }
-    res.status(200).json({ response });
+    const {availableProducts} = response
+    const productsData = availableProducts.map(doc => doc.toObject());
+    const {code, purchase_datetime} = response.purchaseTicket;
+    const total = response.totalAmount;
+    res.status(200).render('ticketPurchase',{products: productsData, ticket: {code, purchase_datetime}, total: total });
   } catch (error) {
     next(error);
   }

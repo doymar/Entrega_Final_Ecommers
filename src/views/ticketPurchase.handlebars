@@ -1,0 +1,15 @@
+<h2>This is your purchase ticket:</h2>
+
+<p><b>Ticket N°:</b> {{ticket.code}}</p>
+<p><b>Date:</b> {{ticket.purchase_datetime}}</p>
+{{#if products}}
+<p><b>Products:</b></p>
+{{#each products}}
+<div>
+    <p>{{product.title}} &emsp; - &emsp; quantity: {{quantity}} &emsp; price: ${{product.price}}  </p>
+</div>
+{{/each}}
+<h3>TOTAL: &emsp; ${{total}}</h3>
+{{else}}
+<p>No ticket</p>
+{{/if}}
