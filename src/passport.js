@@ -87,6 +87,7 @@ passport.use('google', new GoogleStrategy(
         clientSecret: config.google_clientsecret,
         callbackURL: "http://localhost:8080/api/sessions/auth/google/callback"
     },
+    
     async function(accessToken, refreshToken, profile, done){
         try {
             const userDB = await UserManager.findByEmail(profile._json.email);
