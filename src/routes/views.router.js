@@ -9,6 +9,9 @@ import { logger } from "../utils/logger.js";
 const router = Router();
 
 router.get("/", authMiddleware(['user','premium']), (req,res)=>{
+    if (!req.user) {
+        return res.redirect("/login")
+    }
     res.render("chat");
 });
 
